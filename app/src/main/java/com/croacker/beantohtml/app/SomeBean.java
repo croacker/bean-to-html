@@ -18,6 +18,14 @@ public class SomeBean {
         this.name = name;
     }
 
+    public String getLast() {
+        return last;
+    }
+
+    public void setLast(String last) {
+        this.last = last;
+    }
+
     public int getCounter() {
         return counter;
     }
@@ -26,11 +34,21 @@ public class SomeBean {
         this.counter = counter;
     }
 
+    public int getMounter() {
+        return mounter;
+    }
+
+    public void setMounter(int mounter) {
+        this.mounter = mounter;
+    }
+
     public void incCounter(){
         this.counter++;
     }
 
     private String id;
     private String name;
+    private String last;
     private int counter;
+    private int mounter;
 }
