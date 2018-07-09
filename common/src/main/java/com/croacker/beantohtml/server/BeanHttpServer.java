@@ -1,0 +1,95 @@
+package com.croacker.beantohtml.server;
+
+import com.croacker.beantohtml.serivice.HtmlService;
+import com.sun.net.httpserver.HttpContext;
+import com.sun.net.httpserver.HttpHandler;
+import com.sun.net.httpserver.HttpServer;
+import com.sun.net.httpserver.spi.HttpServerProvider;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.InetSocketAddress;
+import java.util.concurrent.Executor;
+
+public class BeanHttpServer extends HttpServer {
+
+    private HtmlService htmlService = new HtmlService();
+
+    private HttpServer httpServer;
+
+    private BeanHttpServer(InetSocketAddress inetSocketAddress, int backlog) throws IOException {
+        HttpServerProvider provider = HttpServerProvider.provider();
+        httpServer = provider.createHttpServer(inetSocketAddress, backlog);
+    }
+
+    public static BeanHttpServer create() throws IOException {
+        return create(null, 0);
+    }
+
+    public static BeanHttpServer create(InetSocketAddress inetSocketAddress, int backlog) throws IOException {
+        BeanHttpServer beanHttpServer = new BeanHttpServer(inetSocketAddress, backlog);
+        return beanHttpServer;
+    }
+
+    @Override
+    public void bind(InetSocketAddress inetSocketAddress, int i) throws IOException {
+        httpServer.bind(inetSocketAddress, i);
+    }
+
+    @Override
+    public void start() {
+        httpServer.start();
+    }
+
+    @Override
+    public void setExecutor(Executor executor) {
+        httpServer.setExecutor(executor);
+    }
+
+    @Override
+    public Executor getExecutor() {
+        return httpServer.getExecutor();
+    }
+
+    @Override
+    public void stop(int i) {
+        httpServer.stop(i);
+    }
+
+    @Override
+    public HttpContext createContext(String s, HttpHandler httpHandler) {
+        return httpServer.createContext(s, httpHandler);
+    }
+
+    public HttpContext createBeanContext(String s, BeanHandler beanHandler) {
+        return httpServer.createContext(s, exchange -> {
+                    byte[] data = htmlService.toHtml(beanHandler.get());
+                    exchange.sendResponseHeaders(200, data.length);
+                    OutputStream stream = exchange.getResponseBody();
+                    stream.write(data);
+                    stream.close();
+                    stream.close();
+                }
+        );
+    }
+
+    @Override
+    public HttpContext createContext(String s) {
+        return httpServer.createContext(s);
+    }
+
+    @Override
+    public void removeContext(String s) throws IllegalArgumentException {
+        httpServer.removeContext(s);
+    }
+
+    @Override
+    public void removeContext(HttpContext httpContext) {
+        httpServer.removeContext(httpContext);
+    }
+
+    @Override
+    public InetSocketAddress getAddress() {
+        return httpServer.getAddress();
+    }
+}
