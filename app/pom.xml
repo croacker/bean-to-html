@@ -23,4 +23,69 @@
         </dependency>
     </dependencies>
 
+    <properties>
+        <maven.compiler.plugin.version>3.7.0</maven.compiler.plugin.version>
+        <maven.jar.plugin.version>3.0.2</maven.jar.plugin.version>
+        <appassembler.maven.plugin.version>2.0.0</appassembler.maven.plugin.version>
+        <app.main.class>com.croacker.beantohtml.app.AppBeanToHtml</app.main.class>
+        <final.jar.name>beantohtml-app</final.jar.name>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven.compiler.plugin.version}</version>
+                <configuration>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>${maven.jar.plugin.version}</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>${app.main.class}</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>appassembler-maven-plugin</artifactId>
+                <version>${appassembler.maven.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>assemble</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <repositoryLayout>flat</repositoryLayout>
+                    <programs>
+                        <program>
+                            <mainClass>${app.main.class}</mainClass>
+                            <id>app</id>
+                        </program>
+                    </programs>
+                    <showConsoleWindow>true</showConsoleWindow>
+                    <configurationSourceDirectory>src/main/resources</configurationSourceDirectory>
+                    <configurationDirectory>resources</configurationDirectory>
+                    <copyConfigurationDirectory>true</copyConfigurationDirectory>
+                    <platforms>
+                        <platform>unix</platform>
+                        <platform>windows</platform>
+                    </platforms>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>
