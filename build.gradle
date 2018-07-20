@@ -1,0 +1,23 @@
+allprojects  {
+  apply plugin: 'java'
+
+  group = 'com.croacker.beantohtml'
+  version = '0.0.1'
+}
+
+subprojects {
+  apply plugin: 'java'
+  sourceCompatibility = 1.8
+  targetCompatibility = 1.8
+
+  
+  repositories {
+    mavenLocal()
+    
+    maven { url "http://repo.maven.apache.org/maven2" }
+  }
+
+  
+  
+  
+}
