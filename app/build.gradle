@@ -1,0 +1,19 @@
+apply plugin: 'java'
+apply plugin: 'application'
+
+description = ''
+mainClassName = 'com.croacker.beantohtml.app.AppBeanToHtml'
+
+dependencies {
+  compile project(':common-beantohtml')
+}
+
+jar {
+  manifest {
+    attributes "Main-Class": "com.croacker.beantohtml.app.AppBeanToHtml"
+  }
+
+  from {
+    configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+  }
+}

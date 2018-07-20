@@ -26,7 +26,6 @@ public class AppBeanToHtml {
         SomeBean someBean = new SomeBean();
         someBean.setId("111");
         someBean.setName("Name");
-        someBean.setCounter(0);
         return someBean;
     }
 

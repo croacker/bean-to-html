@@ -1,0 +1,6 @@
+rootProject.name = 'beantohtml'
+include ':common-beantohtml'
+include ':beantohtml-app'
+
+project(':common-beantohtml').projectDir = "$rootDir/common" as File
+project(':beantohtml-app').projectDir = "$rootDir/app" as File
