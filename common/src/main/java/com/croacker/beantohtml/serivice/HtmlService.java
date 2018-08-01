@@ -6,7 +6,7 @@ import com.croacker.beantohtml.serivice.bean.FieldAdapter;
 import java.text.MessageFormat;
 
 /**
- * @author AGumenyuk
+ * @author croacker
  * @since 09.07.2018 18:59
  */
 public class HtmlService {
@@ -50,7 +50,7 @@ public class HtmlService {
     }
 
     private String startForm(){
-        return "<form><div class='table-container'>";
+        return "<form method='post'><div class='table-container'>";
     }
 
     private String br(){
@@ -66,7 +66,9 @@ public class HtmlService {
     }
 
     private String endForm(){
-        return "</div></form>";
+        return "</div>" +
+                "<div><input type='submit'></div>" +
+                "</form>";
     }
 
     private String footer(){

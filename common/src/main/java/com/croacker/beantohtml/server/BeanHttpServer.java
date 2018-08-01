@@ -63,11 +63,25 @@ public class BeanHttpServer extends HttpServer {
 
     public HttpContext createBeanContext(String s, BeanHandler beanHandler) {
         return httpServer.createContext(s, exchange -> {
-                    byte[] data = htmlService.toHtml(beanHandler.get());
-                    exchange.sendResponseHeaders(200, data.length);
-                    OutputStream stream = exchange.getResponseBody();
-                    stream.write(data);
-                    stream.close();
+                    String methodName = exchange.getRequestMethod();
+                    if (methodName.equals("GET")) {
+                        byte[] data = htmlService.toHtml(beanHandler.get());
+                        exchange.sendResponseHeaders(200, data.length);
+                        OutputStream stream = exchange.getResponseBody();
+                        stream.write(data);
+                        stream.close();
+                    } else if (methodName.equals("POST")) {
+                        StringBuilder builder = new StringBuilder("POST RESULT");
+                        for(String name: exchange.getRequestHeaders().keySet()){
+                            builder.append(name);
+                            builder.append("\n");
+                        }
+                        byte[] data = builder.toString().getBytes();
+                        exchange.sendResponseHeaders(200, data.length);
+                        OutputStream stream = exchange.getResponseBody();
+                        stream.write(data);
+                        stream.close();
+                    }
                 }
         );
     }

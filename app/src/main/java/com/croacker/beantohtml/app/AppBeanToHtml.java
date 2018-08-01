@@ -8,7 +8,8 @@ public class AppBeanToHtml {
 
     public static void main(String[] args) throws Exception {
         BeanHttpServer server = BeanHttpServer.create(new InetSocketAddress(8084), 0);
-        server.createBeanContext("/bean", () -> getBean());
+        SomeBean bean = getBean();
+        server.createBeanContext("/bean", () -> bean);
         server.start();
     }
 
