@@ -68,7 +68,6 @@ public class BeanHttpServer extends HttpServer {
                     OutputStream stream = exchange.getResponseBody();
                     stream.write(data);
                     stream.close();
-                    stream.close();
                 }
         );
     }
