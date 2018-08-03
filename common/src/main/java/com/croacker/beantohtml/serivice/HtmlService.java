@@ -4,6 +4,7 @@ import com.croacker.beantohtml.serivice.bean.BeanAdapter;
 import com.croacker.beantohtml.serivice.bean.FieldAdapter;
 
 import java.text.MessageFormat;
+import java.util.Map;
 
 /**
  * @author croacker
@@ -24,10 +25,8 @@ public class HtmlService {
         BeanAdapter<T> beanAdapter = getBeanService().getAdapter(bean);
         StringBuilder builder = new StringBuilder();
         try {
-            builder.append(header())
-            .append(startForm());
-
-            for (FieldAdapter field : beanAdapter.getFields()) {
+            builder.append(header(bean)).append(startForm());
+            for (FieldAdapter field : beanAdapter.getFields().values()) {
                 builder.append(field(field.getName(), field.getValue())).append(br());
             }
             builder.append(endForm());
@@ -40,13 +39,18 @@ public class HtmlService {
         return builder.toString().getBytes();
     }
 
-    private String header(){
+    public <T> void toBean(T bean, Map<String, String> parameters) {
+        BeanAdapter<T> beanAdapter = getBeanService().getAdapter(bean);
+        beanAdapter.update(parameters);
+    }
+
+    private <T> String header(T bean){
         return "<!DOCTYPE html>\n" +
                 "<head>\n" +
                 "<link rel='stylesheet' href='https://yegor256.github.io/tacit/tacit.min.css'/>\n"+
                 "</head>\n" +
                 "<body>\n" +
-                "<h2>Bean</h2>";
+                "<h2>" + bean.getClass().getSimpleName() + "</h2>";
     }
 
     private String startForm(){
@@ -60,7 +64,7 @@ public class HtmlService {
     private String field(String label, Object value){
         return MessageFormat.format("<div class='column1-container'>{0}:</div>" +
                         "<div class='column2-container'>" +
-                        " <input type='text' name='firstname' value=''{1}''/>" +
+                        " <input type='text' autocomplete='off' name=''{0}'' value=''{1}''/>" +
                         "</div>",
                 label, value);
     }

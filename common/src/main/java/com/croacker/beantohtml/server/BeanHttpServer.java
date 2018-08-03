@@ -1,6 +1,7 @@
 package com.croacker.beantohtml.server;
 
 import com.croacker.beantohtml.serivice.HtmlService;
+import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpContext;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
@@ -8,8 +9,13 @@ import com.sun.net.httpserver.spi.HttpServerProvider;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
+import java.text.StringCharacterIterator;
+import java.util.Map;
 import java.util.concurrent.Executor;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class BeanHttpServer extends HttpServer {
 
@@ -71,13 +77,20 @@ public class BeanHttpServer extends HttpServer {
                         stream.write(data);
                         stream.close();
                     } else if (methodName.equals("POST")) {
-                        StringBuilder builder = new StringBuilder("POST RESULT");
-                        for(String name: exchange.getRequestHeaders().keySet()){
-                            builder.append(name);
-                            builder.append("\n");
-                        }
-                        byte[] data = builder.toString().getBytes();
-                        exchange.sendResponseHeaders(200, data.length);
+                        Headers headers = exchange.getRequestHeaders();
+                        int contentLength = Integer.parseInt(headers.getFirst("Content-length"));
+                        byte[] data = new byte[contentLength];
+
+                        exchange.getRequestBody().read(data);
+
+                        String dataStr = new String(data);
+                        Map<String, String> parameters = Stream.of(dataStr.split("&"))
+                                .map(el -> el.split("="))
+                                .collect(Collectors.toMap(e -> e[0], e -> e[1]));
+                        htmlService.toBean(beanHandler.get(), parameters);
+
+                        data = htmlService.toHtml(beanHandler.get());
+                        exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, data.length);
                         OutputStream stream = exchange.getResponseBody();
                         stream.write(data);
                         stream.close();
