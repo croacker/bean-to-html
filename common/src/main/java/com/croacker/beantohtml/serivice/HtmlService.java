@@ -1,7 +1,7 @@
 package com.croacker.beantohtml.serivice;
 
 import com.croacker.beantohtml.serivice.bean.BeanAdapter;
-import com.croacker.beantohtml.serivice.bean.FieldAdapter;
+import com.croacker.beantohtml.serivice.bean.PlainFieldAdapter;
 
 import java.text.MessageFormat;
 import java.util.Map;
@@ -26,7 +26,7 @@ public class HtmlService {
         StringBuilder builder = new StringBuilder();
         try {
             builder.append(header(bean)).append(startForm());
-            for (FieldAdapter field : beanAdapter.getFields().values()) {
+            for (PlainFieldAdapter field : beanAdapter.getFields().values()) {
                 builder.append(field(field.getName(), field.getValue())).append(br());
             }
             builder.append(endForm());
@@ -71,7 +71,7 @@ public class HtmlService {
 
     private String endForm(){
         return "</div>" +
-                "<div><input type='submit'></div>" +
+                "<div><button type='submit'>Save</button></div>" +
                 "</form>";
     }
 

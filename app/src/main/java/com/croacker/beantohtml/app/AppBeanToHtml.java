@@ -8,16 +8,16 @@ public class AppBeanToHtml {
 
     public static void main(String[] args) throws Exception {
         BeanHttpServer server = BeanHttpServer.create(new InetSocketAddress(8084), 0);
-        SomeBean bean = getBean();
+        Employee bean = getBean();
         server.createBeanContext("/bean", () -> bean);
         server.start();
     }
 
-    private static SomeBean getBean() {
-        SomeBean someBean = new SomeBean();
-        someBean.setId("111");
-        someBean.setName("Name");
-        return someBean;
+    private static Employee getBean() {
+        Employee employee = new Employee();
+        employee.setId("111");
+        employee.setFirstName("Name");
+        return employee;
     }
 
 }

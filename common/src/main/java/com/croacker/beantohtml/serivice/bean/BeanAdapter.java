@@ -8,13 +8,13 @@ public class BeanAdapter<T> {
 
     private T bean;
 
-    private Map<String, FieldAdapter<T>> fields = new HashMap<>();
+    private Map<String, PlainFieldAdapter<T>> fields = new HashMap<>();
 
     public T getBean() {
         return bean;
     }
 
-    public Map<String, FieldAdapter<T>> getFields() {
+    public Map<String, PlainFieldAdapter<T>> getFields() {
         return fields;
     }
 
@@ -24,9 +24,9 @@ public class BeanAdapter<T> {
     }
 
     public void update(Map<String, String> parameters) {
-        for (Map.Entry<String, FieldAdapter<T>> entry : getFields().entrySet()) {
+        for (Map.Entry<String, PlainFieldAdapter<T>> entry : getFields().entrySet()) {
             String key = entry.getKey();
-            FieldAdapter field = entry.getValue();
+            PlainFieldAdapter field = entry.getValue();
             String newValue = parameters.get(key);
             field.setValue(newValue);
         }
@@ -35,7 +35,7 @@ public class BeanAdapter<T> {
     private void makeFields(T bean) {
         for (Field field : bean.getClass().getDeclaredFields()) {
             field.setAccessible(true);
-            fields.put(field.getName(), new FieldAdapter<>(bean, field));
+            fields.put(field.getName(), new PlainFieldAdapter<>(bean, field));
         }
     }
 
