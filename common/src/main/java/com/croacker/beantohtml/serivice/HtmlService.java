@@ -1,25 +1,33 @@
 package com.croacker.beantohtml.serivice;
 
-import java.lang.reflect.Field;
+import com.croacker.beantohtml.serivice.bean.BeanAdapter;
+import com.croacker.beantohtml.serivice.bean.PlainFieldAdapter;
+
 import java.text.MessageFormat;
+import java.util.Map;
 
 /**
- * @author AGumenyuk
+ * @author croacker
  * @since 09.07.2018 18:59
  */
 public class HtmlService {
 
-    public byte[] toHtml(Object bean) {
+    private BeanService beanService;
+
+    private BeanService getBeanService(){
+        if(beanService == null){
+            beanService = new BeanService();
+        }
+        return beanService;
+    }
+
+    public <T> byte[] toHtml(T bean) {
+        BeanAdapter<T> beanAdapter = getBeanService().getAdapter(bean);
         StringBuilder builder = new StringBuilder();
         try {
-            builder.append(header())
-            .append(startForm());
-
-            for (Field field : bean.getClass().getDeclaredFields()) {
-                field.setAccessible(true);
-                String name = field.getName();
-                Object value = field.get(bean);
-                builder.append(field(name, value)).append(br());
+            builder.append(header(bean)).append(startForm());
+            for (PlainFieldAdapter field : beanAdapter.getFields().values()) {
+                builder.append(field(field.getName(), field.getValue())).append(br());
             }
             builder.append(endForm());
             builder.append(footer());
@@ -31,17 +39,22 @@ public class HtmlService {
         return builder.toString().getBytes();
     }
 
-    private String header(){
+    public <T> void toBean(T bean, Map<String, String> parameters) {
+        BeanAdapter<T> beanAdapter = getBeanService().getAdapter(bean);
+        beanAdapter.update(parameters);
+    }
+
+    private <T> String header(T bean){
         return "<!DOCTYPE html>\n" +
-                "<html>\n" +
+                "<head>\n" +
                 "<link rel='stylesheet' href='https://yegor256.github.io/tacit/tacit.min.css'/>\n"+
-                "</html>\n" +
+                "</head>\n" +
                 "<body>\n" +
-                "<h2>Bean</h2>";
+                "<h2>" + bean.getClass().getSimpleName() + "</h2>";
     }
 
     private String startForm(){
-        return "<form><div class='table-container'>";
+        return "<form method='post'><div class='table-container'>";
     }
 
     private String br(){
@@ -50,12 +63,16 @@ public class HtmlService {
 
     private String field(String label, Object value){
         return MessageFormat.format("<div class='column1-container'>{0}:</div>" +
-                        "<div class='column2-container'> <input type='text' name='firstname' value=''{1}''</div>",
+                        "<div class='column2-container'>" +
+                        " <input type='text' autocomplete='off' name=''{0}'' value=''{1}''/>" +
+                        "</div>",
                 label, value);
     }
 
     private String endForm(){
-        return "</div></form>";
+        return "</div>" +
+                "<div><button type='submit'>Save</button></div>" +
+                "</form>";
     }
 
     private String footer(){
