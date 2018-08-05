@@ -28,6 +28,7 @@ public class HtmlService {
         BeanAdapter<T> beanAdapter = getBeanService().getAdapter(bean);
         StringBuilder builder = new StringBuilder();
         try {
+            //TODO Доделать формирование с помощью Document
             Document document = getDocument(beanAdapter);
 
             builder.append(header(bean)).append(startForm());
