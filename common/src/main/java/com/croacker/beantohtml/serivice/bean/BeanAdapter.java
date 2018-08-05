@@ -23,6 +23,10 @@ public class BeanAdapter<T> {
         makeFields(bean);
     }
 
+    public String getTitle(){
+        return getBean().getClass().getSimpleName();
+    }
+
     public void update(Map<String, String> parameters) {
         for (Map.Entry<String, PlainFieldAdapter<T>> entry : getFields().entrySet()) {
             String key = entry.getKey();

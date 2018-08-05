@@ -2,6 +2,9 @@ package com.croacker.beantohtml.serivice;
 
 import com.croacker.beantohtml.serivice.bean.BeanAdapter;
 import com.croacker.beantohtml.serivice.bean.PlainFieldAdapter;
+import com.croacker.beantohtml.serivice.html.Body;
+import com.croacker.beantohtml.serivice.html.Document;
+import com.croacker.beantohtml.serivice.html.Head;
 
 import java.text.MessageFormat;
 import java.util.Map;
@@ -25,6 +28,8 @@ public class HtmlService {
         BeanAdapter<T> beanAdapter = getBeanService().getAdapter(bean);
         StringBuilder builder = new StringBuilder();
         try {
+            Document document = getDocument(beanAdapter);
+
             builder.append(header(bean)).append(startForm());
             for (PlainFieldAdapter field : beanAdapter.getFields().values()) {
                 builder.append(field(field.getName(), field.getValue())).append(br());
@@ -37,6 +42,16 @@ public class HtmlService {
             e.printStackTrace();
         }
         return builder.toString().getBytes();
+    }
+
+    private <T> Document getDocument(BeanAdapter<T> beanAdapter) {
+        Document document = new Document();
+        document.setHead(new Head());
+        Body body = new Body();
+        document.setBody(body);
+        body.setTitle(beanAdapter.getTitle());
+        //TODO Доделать формирование с помощью Document
+        return document;
     }
 
     public <T> void toBean(T bean, Map<String, String> parameters) {
@@ -54,7 +69,7 @@ public class HtmlService {
     }
 
     private String startForm(){
-        return "<form method='post'><div class='table-container'>";
+        return "<form method='post'><div class='bean-form'>";
     }
 
     private String br(){
@@ -62,8 +77,8 @@ public class HtmlService {
     }
 
     private String field(String label, Object value){
-        return MessageFormat.format("<div class='column1-container'>{0}:</div>" +
-                        "<div class='column2-container'>" +
+        return MessageFormat.format("<div class='bean-form-field-label'>{0}:</div>" +
+                        "<div class='bean-form-field-value'>" +
                         " <input type='text' autocomplete='off' name=''{0}'' value=''{1}''/>" +
                         "</div>",
                 label, value);
@@ -76,7 +91,7 @@ public class HtmlService {
     }
 
     private String footer(){
-        return "</body>\n" +
+        return "</body>" +
                 "</html>";
     }
 }
