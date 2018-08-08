@@ -14,6 +14,8 @@ public class Form {
                     "<div><button type='submit'>Save</button></div>" +
                     "</form>";
 
+    public static final String BR = "<br>";
+
     private List<FormField> fields = new ArrayList<>();
 
     public void addField(FormField field) {
@@ -24,6 +26,7 @@ public class Form {
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
         fields.forEach(stringBuilder::append);
+        stringBuilder.append(BR);
         return MessageFormat.format(TEMPLATE, stringBuilder);
     }
 }

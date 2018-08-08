@@ -33,6 +33,6 @@ public class Body {
 
     @Override
     public String toString() {
-        return MessageFormat.format(TEMPLATE, getForm());
+        return MessageFormat.format(TEMPLATE, getTitle(), getForm());
     }
 }
