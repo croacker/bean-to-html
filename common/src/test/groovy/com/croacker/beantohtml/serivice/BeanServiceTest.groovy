@@ -4,14 +4,15 @@ import spock.lang.Specification
 
 class BeanServiceTest extends Specification {
 
-    def "Make Bean adapter"(){
+    def "Adapter for object always equals"(){
         given:
-        def beanService = new BeanService();
-        def bean = new Object();
+        def beanService = new BeanService()
+        def bean = new Object()
         when:
-        def adapter = beanService.getAdapter(bean)
+        def adapter1 = beanService.getAdapter(bean)
+        def adapter2 = beanService.getAdapter(bean)
         then:
-        adapter != null
+        adapter1 == adapter2
     }
 
 }
