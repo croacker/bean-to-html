@@ -4,7 +4,7 @@ public class Head {
 
     public static final String TEMPLATE =
             "<head>" +
-            "<link rel='stylesheet' href='https://yegor256.github.io/tacit/tacit.min.css'/>" +
+            "<link rel='stylesheet' href='static/css/tacit.min.css'/>" +
             "</head>";
 
     @Override

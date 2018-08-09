@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
-import java.text.StringCharacterIterator;
 import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
@@ -44,6 +43,7 @@ public class BeanHttpServer extends HttpServer {
 
     @Override
     public void start() {
+        createContext("/static", new StaticHandler());
         httpServer.start();
     }
 
