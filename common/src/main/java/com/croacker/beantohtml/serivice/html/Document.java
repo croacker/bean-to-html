@@ -15,7 +15,7 @@ public class Document {
 
     public Head getHead() {
         if(head == null){
-            head = new Head();
+            head = new Head("");
         }
         return head;
     }

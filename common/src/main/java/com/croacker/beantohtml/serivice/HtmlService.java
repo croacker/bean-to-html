@@ -21,11 +21,11 @@ public class HtmlService {
         return beanService;
     }
 
-    public <T> byte[] toHtml(T bean) {
+    public <T> byte[] toHtml(T bean, String staticHandler) {
         BeanAdapter<T> beanAdapter = getBeanService().getAdapter(bean);
         StringBuilder builder = new StringBuilder();
         try {
-            builder.append(getDocument(beanAdapter));
+            builder.append(getDocument(beanAdapter, staticHandler));
         } catch (Exception e) {
             builder = new StringBuilder();
             builder.append(e.getMessage());
@@ -34,9 +34,9 @@ public class HtmlService {
         return builder.toString().getBytes();
     }
 
-    private <T> Document getDocument(BeanAdapter<T> beanAdapter) {
+    private <T> Document getDocument(BeanAdapter<T> beanAdapter, String staticHandler) {
         Document document = new Document();
-        document.setHead(new Head());
+        document.setHead(new Head(staticHandler));
         Body body = new Body();
         document.setBody(body);
         body.setTitle(beanAdapter.getTitle());

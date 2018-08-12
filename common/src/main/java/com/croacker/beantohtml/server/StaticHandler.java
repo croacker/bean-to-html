@@ -5,15 +5,18 @@ import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.URI;
 
 public class StaticHandler implements HttpHandler {
 
     private ResourceService resourceService;
+
+    private String staticRoute;
+
+    public StaticHandler(String staticRoute) {
+        this.staticRoute = staticRoute;
+    }
 
     private ResourceService getResourceService(){
         if(resourceService == null){
@@ -25,11 +28,11 @@ public class StaticHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
         URI uri = httpExchange.getRequestURI();
-        System.out.println("" + uri.getPath());
-        String path = uri.getPath();
+        String path = uri.getPath().replace(staticRoute, "");
+        InputStream inputStream = getResourceService().get(path);
         File file = new File(path).getCanonicalFile();
 
-        if (!file.isFile()) {
+        if (inputStream == null) {
             String response = "404 (Not Found)\n";
             httpExchange.sendResponseHeaders(404, response.length());
             OutputStream os = httpExchange.getResponseBody();
@@ -44,15 +47,14 @@ public class StaticHandler implements HttpHandler {
             h.set("Content-Type", mime);
             httpExchange.sendResponseHeaders(200, 0);
 
-            OutputStream os = httpExchange.getResponseBody();
-            FileInputStream fs = new FileInputStream(file);
+            OutputStream outputStream = httpExchange.getResponseBody();
             final byte[] buffer = new byte[0x10000];
-            int count = 0;
-            while ((count = fs.read(buffer)) >= 0) {
-                os.write(buffer, 0, count);
+            int count;
+            while ((count = inputStream.read(buffer)) >= 0) {
+                outputStream.write(buffer, 0, count);
             }
-            fs.close();
-            os.close();
+            inputStream.close();
+            outputStream.close();
         }
     }
 }

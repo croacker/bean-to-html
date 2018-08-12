@@ -22,6 +22,8 @@ public class BeanHttpServer extends HttpServer {
 
     private HttpServer httpServer;
 
+    private String staticHandlerRoute;
+
     private BeanHttpServer(InetSocketAddress inetSocketAddress, int backlog) throws IOException {
         HttpServerProvider provider = HttpServerProvider.provider();
         httpServer = provider.createHttpServer(inetSocketAddress, backlog);
@@ -43,7 +45,8 @@ public class BeanHttpServer extends HttpServer {
 
     @Override
     public void start() {
-        createContext("/static", new StaticHandler());
+        String route = "/" + getStaticHandlerRoute();
+        createContext(route, new StaticHandler(route));
         httpServer.start();
     }
 
@@ -71,7 +74,7 @@ public class BeanHttpServer extends HttpServer {
         return httpServer.createContext(s, exchange -> {
                     String methodName = exchange.getRequestMethod();
                     if (methodName.equals("GET")) {
-                        byte[] data = htmlService.toHtml(beanHandler.get());
+                        byte[] data = htmlService.toHtml(beanHandler.get(), getStaticHandlerRoute());
                         exchange.sendResponseHeaders(200, data.length);
                         OutputStream stream = exchange.getResponseBody();
                         stream.write(data);
@@ -89,7 +92,7 @@ public class BeanHttpServer extends HttpServer {
                                 .collect(Collectors.toMap(e -> e[0], e -> e[1]));
                         htmlService.toBean(beanHandler.get(), parameters);
 
-                        data = htmlService.toHtml(beanHandler.get());
+                        data = htmlService.toHtml(beanHandler.get(), getStaticHandlerRoute());
                         exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, data.length);
                         OutputStream stream = exchange.getResponseBody();
                         stream.write(data);
@@ -117,5 +120,12 @@ public class BeanHttpServer extends HttpServer {
     @Override
     public InetSocketAddress getAddress() {
         return httpServer.getAddress();
+    }
+
+    private String getStaticHandlerRoute(){
+        if (staticHandlerRoute == null){
+            staticHandlerRoute = "static-" + hashCode();
+        }
+        return staticHandlerRoute;
     }
 }
